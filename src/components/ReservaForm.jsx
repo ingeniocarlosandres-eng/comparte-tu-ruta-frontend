@@ -21,10 +21,10 @@ function ReservaForm({ ruta, onReservar, cargando, mensaje }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: '0 var(--sp5) var(--sp5)', display: 'flex', gap: 'var(--sp2)', alignItems: 'center' }}>
+    <form onSubmit={handleSubmit} style={{ padding: '0 var(--sp5) var(--sp5)', display: 'flex', gap: 'var(--sp2)', alignItems: 'center', flexWrap: 'wrap' }}>
       <select
         className="form-input"
-        style={{ height: 40, width: 90 }}
+        style={{ height: 40, minWidth: 120, flex: '1 1 auto' }}
         value={puestos}
         onChange={(e) => setPuestos(e.target.value)}
       >
