@@ -72,11 +72,13 @@ function SolicitudesPendientes() {
       <div className="grid-cards">
         {solicitudes.map((solicitud) => (
           <div key={solicitud.id} className="card" style={{ padding: 'var(--sp5)' }}>
-            <h3 style={{ marginBottom: 'var(--sp2)' }}>
-              {solicitud.ruta.barrioOrigen} → {solicitud.ruta.barrioDestino}
-            </h3>
-            <p>{solicitud.ruta.fechaSalida} · {solicitud.ruta.horaSalida?.slice(0, 5)}</p>
-            <p>Puestos solicitados: {solicitud.puestosReservados}</p>
+           <h3 style={{ marginBottom: 'var(--sp2)' }}>
+  {solicitud.ruta.barrioOrigen} → {solicitud.ruta.barrioDestino}
+</h3>
+<p>{solicitud.ruta.fechaSalida} · {solicitud.ruta.horaSalida?.slice(0, 5)}</p>
+<p>Puestos solicitados: {solicitud.puestosReservados}</p>
+<p><strong>Pasajero:</strong> {solicitud.pasajero?.nombre ?? 'No disponible'}</p>
+{solicitud.pasajero?.telefono && <p>Tel: {solicitud.pasajero.telefono}</p>}
 
             <div style={{ display: 'flex', gap: 'var(--sp2)', marginTop: 'var(--sp4)' }}>
               <button
