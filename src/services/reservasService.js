@@ -29,3 +29,7 @@ export async function rechazarReserva(id) {
   const { data } = await api.patch(`/reservas/${id}/rechazar`);
   return data;
 }
+export async function cancelarReserva(id) {
+  const { data } = await api.patch(`/reservas/${id}/cancelar`);
+  return data;
+}

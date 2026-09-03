@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { misReservas } from '../services/reservasService';
+import { misReservas, cancelarReserva } from '../services/reservasService';
 import { obtenerRutaPorId } from '../services/rutasService';
 
 const ETIQUETAS_ESTADO = {
@@ -14,33 +14,44 @@ function MisReservas() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
+  const cargar = async () => {
+    setCargando(true);
+    setError('');
+    try {
+      const data = await misReservas();
+      // Enriquecemos cada reserva con los datos de su ruta (origen, destino, fecha),
+      // ya que el backend solo devuelve el rutaId, no el detalle de la ruta.
+      const reservasConRuta = await Promise.all(
+        data.reservas.map(async (reserva) => {
+          try {
+            const { ruta } = await obtenerRutaPorId(reserva.rutaId);
+            return { ...reserva, ruta };
+          } catch {
+            return { ...reserva, ruta: null };
+          }
+        }),
+      );
+      setReservas(reservasConRuta);
+    } catch (err) {
+      setError('No se pudieron cargar tus reservas.');
+    } finally {
+      setCargando(false);
+    }
+  };
+
   useEffect(() => {
-    const cargar = async () => {
-      setCargando(true);
-      setError('');
-      try {
-        const data = await misReservas();
-        // Enriquecemos cada reserva con los datos de su ruta (origen, destino, fecha),
-        // ya que el backend solo devuelve el rutaId, no el detalle de la ruta.
-        const reservasConRuta = await Promise.all(
-          data.reservas.map(async (reserva) => {
-            try {
-              const { ruta } = await obtenerRutaPorId(reserva.rutaId);
-              return { ...reserva, ruta };
-            } catch {
-              return { ...reserva, ruta: null };
-            }
-          }),
-        );
-        setReservas(reservasConRuta);
-      } catch (err) {
-        setError('No se pudieron cargar tus reservas.');
-      } finally {
-        setCargando(false);
-      }
-    };
     cargar();
   }, []);
+
+  const handleCancelar = async (id) => {
+    if (!window.confirm('¿Cancelar esta reserva?')) return;
+    try {
+      await cancelarReserva(id);
+      await cargar();
+    } catch (err) {
+      alert(err.response?.data?.mensaje || 'No se pudo cancelar la reserva');
+    }
+  };
 
   return (
     <div className="container" style={{ paddingBlock: 'var(--sp6)' }}>
@@ -71,10 +82,20 @@ function MisReservas() {
               <div style={{ marginTop: 'var(--sp3)', paddingTop: 'var(--sp3)', borderTop: '1px solid var(--border-2)' }}>
                 <p style={{ fontWeight: 700, fontSize: '.8rem', marginBottom: 'var(--sp1)' }}>Conductor</p>
                 <p>{reserva.ruta.conductor.nombre}{reserva.ruta.conductor.telefono && ` · Tel: ${reserva.ruta.conductor.telefono}`}</p>
-                {reserva.ruta.vehiculo && (
+                               {reserva.ruta.vehiculo && (
                   <p>{reserva.ruta.vehiculo.marca} · Placa: {reserva.ruta.vehiculo.placa}{reserva.ruta.vehiculo.color && ` · ${reserva.ruta.vehiculo.color}`}</p>
                 )}
               </div>
+            )}
+            {['pendiente', 'confirmada'].includes(reserva.estado) && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                style={{ marginTop: 'var(--sp3)' }}
+                onClick={() => handleCancelar(reserva.id)}
+              >
+                Cancelar reserva
+              </button>
             )}
           </div>
         ))}
