@@ -63,10 +63,19 @@ function MisReservas() {
               </h3>
               <span className={`badge badge-${reserva.estado}`}>{ETIQUETAS_ESTADO[reserva.estado]}</span>
             </div>
-            {reserva.ruta && (
+                  {reserva.ruta && (
               <p>{reserva.ruta.fechaSalida} · {reserva.ruta.horaSalida?.slice(0, 5)}</p>
             )}
             <p>Puestos reservados: {reserva.puestosReservados}</p>
+            {reserva.estado === 'confirmada' && reserva.ruta?.conductor && (
+              <div style={{ marginTop: 'var(--sp3)', paddingTop: 'var(--sp3)', borderTop: '1px solid var(--border-2)' }}>
+                <p style={{ fontWeight: 700, fontSize: '.8rem', marginBottom: 'var(--sp1)' }}>Conductor</p>
+                <p>{reserva.ruta.conductor.nombre}{reserva.ruta.conductor.telefono && ` · Tel: ${reserva.ruta.conductor.telefono}`}</p>
+                {reserva.ruta.vehiculo && (
+                  <p>{reserva.ruta.vehiculo.marca} · Placa: {reserva.ruta.vehiculo.placa}{reserva.ruta.vehiculo.color && ` · ${reserva.ruta.vehiculo.color}`}</p>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>

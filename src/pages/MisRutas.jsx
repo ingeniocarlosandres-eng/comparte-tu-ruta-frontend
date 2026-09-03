@@ -5,6 +5,7 @@ import {
 import { misVehiculos } from '../services/vehiculosService';
 import RutaForm from '../components/RutaForm';
 import RutaCard from '../components/RutaCard';
+import PasajerosRuta from '../components/PasajerosRuta';
 
 function MisRutas() {
   const [rutas, setRutas] = useState([]);
@@ -138,9 +139,10 @@ function MisRutas() {
         </div>
       )}
 
-      <div className="grid-cards">
+            <div className="grid-cards">
         {rutas.map((ruta) => (
           <RutaCard key={ruta.id} ruta={ruta}>
+            <PasajerosRuta rutaId={ruta.id} />
             <div style={{ padding: '0 var(--sp5) var(--sp5)', display: 'flex', gap: 'var(--sp2)', flexWrap: 'wrap' }}>
               <button type="button" className="btn btn-outline btn-sm" onClick={() => handleEditar(ruta)}>
                 Editar
